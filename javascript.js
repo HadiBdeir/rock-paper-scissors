@@ -1,67 +1,80 @@
 let start = false;
 
 const options = ["rock", "paper", "scissors"];
+let picked;
 let answer;
 let computerAnswer;
-let yourScore = 0;
+let playerScore = 0;
 let computerScore = 0;
-let result;
+let rounds = 0;
 
-const askToPlay = () => {
-  let playAgain = prompt("Do you want to play? y or n!");
-  if (playAgain.toLowerCase() === "y" || playAgain.toLowerCase() === "yes") {
-    return playerChoice();
-  } else if (playAgain.toLowerCase() === "n" || playAgain.toLowerCase() === "no") {
-    console.log("I guess you dont want to :(");
-    return;
-  } else {
-    prompt("Unknown value, please type again.");
-    return askToPlay();
-  }
-};
+const button = document.querySelectorAll(".btn");
+button.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    picked = btn.textContent.toLowerCase();
+    playRound();
+  });
+});
 
 const playerChoice = () => {
-  answer = prompt("Pick rock, paper, or scissors").toLowerCase();
-  if (answer != "rock" && answer != "paper" && answer != "scissors") {
-    console.log("Invalid prompt. Try again.");
-    playerChoice();
-  } else {
-    console.log("Player choice: " + answer);
-  }
-  return getComputerChoice();
+  return;
 };
 
-const getComputerChoice = () => {
-  computerAnswer = Math.floor(Math.random() * options.length);
-  console.log("Robot choice: " + options[computerAnswer]);
-  return battle();
+const computerChoice = (arr) => {
+  return arr[Math.floor(Math.random() * arr.length)];
 };
 
-function battle() {
-  if (
-    (answer === "rock" && options[computerAnswer] === "scissors") ||
-    (answer === "paper" && options[computerAnswer] === "rock") ||
-    (answer === "scissors" && options[computerAnswer] === "paper")
-  ) {
-    yourScore++;
-    let result = console.log("Congrats, you win!");
-  } else if (
-    (answer === "rock" && options[computerAnswer] === "paper") ||
-    (answer === "paper" && options[computerAnswer] === "scissors") ||
-    (answer === "scissors" && options[computerAnswer] === "rock")
-  ) {
-    computerScore++;
-    let result = console.log("You lost :(");
-  } else if (answer === options[computerAnswer]) {
-    let result = console.log("It's a tie");
+function scoreCheck() {
+  if (playerScore > computerScore) {
+    console.log("YOU WON THE GAME!");
+  } else if (playerScore < computerScore) {
+    console.log("YOU LOST THE GAME:(");
   } else {
-    let result = console.log("Error, somethings not right.");
+    console.log("IT'S A TIE!");
   }
-  console.log(
-    `Your score is: ${yourScore}, the opponents score is: ${computerScore}`
-  );
-  askToPlay();
-  return result;
+  const answer = prompt("Do you wanna continue? y/n:");
+  if (answer === "y") {
+    rounds = 0;
+    playerScore = 0;
+    computerScore = 0;
+    console.clear();
+    console.log("The game has started: ");
+  }
+  if (answer === "n") return;
 }
 
-askToPlay();
+function playRound() {
+  computerAnswer = computerChoice(options);
+  if (rounds === 0) console.log("Game Started:");
+  if (rounds !== 5) {
+    if (
+      (picked === "scissors" && computerAnswer === "paper") ||
+      (picked === "paper" && computerAnswer === "rock") ||
+      (picked === "rock" && computerAnswer === "scissors")
+    ) {
+      console.log(picked);
+      console.log("computer: " + computerAnswer);
+      rounds++;
+      playerScore++;
+      console.log("You win!");
+      if (rounds === 5) scoreCheck();
+    } else if (
+      (picked === "scissors" && computerAnswer === "rock") ||
+      (picked === "paper" && computerAnswer === "scissors") ||
+      (picked === "rock" && computerAnswer === "paper")
+    ) {
+      console.log(picked);
+      console.log("computer: " + computerAnswer);
+      rounds++;
+      computerScore++;
+      console.log("You loose:(");
+      if (rounds === 5) scoreCheck();
+    } else if (picked === computerAnswer) {
+      console.log(picked);
+      console.log("computer: " + computerAnswer);
+      console.log("Its a tie");
+      rounds++;
+      if (rounds === 5) scoreCheck();
+    }
+  }
+}
